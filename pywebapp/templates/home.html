@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+{% csrf_token %}
+<html lang="en">
+<head>
+  <title>Mybookscloud</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+
+
+
+
+function des()
+{
+  confirm('*Password 6 to 20 characters.\n*one numeric digit.\n*one uppercase.\n*one lowercase letter.')
+}
+
+function change()
+{
+
+document.getElementById('okay').style.visibility='visible';
+document.getElementById('abs').style.visibility='hidden';
+
+}
+
+function password_validation()
+{
+  var Password=document.forms['passval']['Password'].value;
+  var ConfirmPassword=document.forms['passval']['ConfirmPassword'].value;
+ console.log(Password);
+ console.log(ConfirmPassword);
+ var passw = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+ ws=/\s/g;
+
+
+
+
+ if(!Password.match(passw))
+  {
+
+    document.passval.Password.focus()
+    document.getElementById('pas').innerHTML='*invalid'
+    document.getElementById('pas').style.visibility='visible';
+    return false;
+
+  }
+
+ else {
+   if ( Password.match(ws)) {
+     document.getElementById('pas').innerHTML='*spaces are not allowed'
+     document.getElementById('pas').style.visibility='visible';
+     return false;
+   }
+  document.getElementById('pas').style.visibility='hidden';
+
+ }
+
+ if(!(Password == ConfirmPassword))
+ {
+   document.getElementById('cpass').style.visibility='visible';
+   document.passval.ConfirmPassword.focus()
+   return false;
+
+
+ }
+else {
+console.log('waiting')
+
+return true;
+}
+
+
+}
+
+
+function share()
+{
+  console.log('shared.............')
+  var name=document.forms['sharing']['filename1'].value;
+
+  console.log(name)
+}
+
+
+</script>
+
+<style media="screen">
+
+
+
+
+
+
+
+#abs{
+  position: absolute;
+  top:330px;
+  left: 205px;
+}
+
+
+.btn1 {
+  border: none;
+  background-color: inherit;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.btn1:hover {background: rgb(0,10,255);}
+
+.success {color: white;}
+
+#align{
+  position: relative;
+
+  width:150px;
+  margin: auto;
+  border: 1px solid blue;
+}
+
+#align2{
+  border: 1px solid blue;
+}
+
+
+
+
+.loader {
+  position: fixed;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background: 50% 50% no-repeat rgb(249,249,249);
+  opacity: .9;
+}
+
+.create{
+
+  height: 80%;
+  width: 100%;
+  display: flex;
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+
+}
+
+
+</style>
+
+
+
+
+</head>
+<body >
+
+
+<script type="text/javascript">
+  $(window).load(function() {
+      $(".loader").fadeOut("slow");
+  });
+  </script>
+
+
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+
+      </button>
+      <a class="navbar-brand" href="home">My Cloud Books</a>
+    </div>
+
+  <div class="collapse navbar-collapse" id="myNavbar">
+  {%if books or book%}
+    <form class="navbar-form navbar-left" action="mybookssearch" method="post">
+      {% csrf_token %}
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Search" name="search" required>
+        <div class="input-group-btn">
+          <button class="btn btn-default" type="submit">
+            <i class="glyphicon glyphicon-search"></i>
+          </button>
+        </div>
+      </div>
+    </form>
+{%endif%}
+
+
+{%if sharedbooks or share%}
+  <form class="navbar-form navbar-left" action="sharedbookssearch" method="post" required>
+    {% csrf_token %}
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Search" name="search" required>
+      <div class="input-group-btn">
+        <button class="btn btn-default" type="submit">
+          <i class="glyphicon glyphicon-search"></i>
+        </button>
+      </div>
+    </div>
+  </form>
+
+{%endif%}
+
+{%if receivedbooks or received%}
+  <form class="navbar-form navbar-left" action="receivedbookssearch" method="post">
+    {% csrf_token %}
+    <div class="input-group">
+      <input type="text" class="form-control" placeholder="Search" name="search" required>
+      <div class="input-group-btn">
+        <button class="btn btn-default" type="submit">
+          <i class="glyphicon glyphicon-search"></i>
+        </button>
+      </div>
+    </div>
+  </form>
+
+{%endif%}
+
+
+
+
+
+    <ul class="nav navbar-nav">
+
+      <li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#"><span class="glyphicon glyphicon-book"></span>&nbsp;Books<span class="caret"></span></a>
+        <ul class="dropdown-menu" style="background-color: #080808">
+        <li><a href="sharedbooks" style="color:rgb(80,90,80);"><span class="glyphicon glyphicon-share" ></span>&nbsp;Shared Books</a></li>
+          <li><a href="receivedbooks" style="color:rgb(80,90,80);"><span class="glyphicon glyphicon-save-file"></span>&nbsp;Received Books</a></li>
+          <li><a href="home" style="color:rgb(80,90,80)"><span class="glyphicon glyphicon-briefcase"></span>&nbsp;My Books</a></li>
+
+        </ul>
+      </li>
+    </ul>
+
+    <ul class="nav navbar-nav ">
+        {%if books or book%}
+          <li><a href="home">&nbsp;&nbsp;<span class="glyphicon glyphicon-refresh"></span>&nbsp;Refresh</a></li>
+        {%endif%}
+        {%if sharedbooks or share%}
+          <li><a href="sharedbooks">&nbsp;&nbsp;<span class="glyphicon glyphicon-refresh"></span>&nbsp;Refresh</span></a></li>
+        {%endif%}
+        {%if receivedbooks or received%}
+          <li><a href="receivedbooks">&nbsp;&nbsp;<span class="glyphicon glyphicon-refresh"></span>&nbsp;Refresh</span></a></li>
+        {%endif%}
+
+    </ul>
+
+
+
+    <ul class="nav navbar-nav navbar-right">
+          <li><a href="#MyModal" class="trigger-btn" data-toggle="modal"><span class="glyphicon glyphicon-user"></span> &nbsp;My Account</a></li>
+      <li> <a href="logout"><span class="glyphicon glyphicon-log-out"></span> &nbsp;Lgout </a> </li>
+
+    </ul>
+  </div>
+    </div>
+</nav>
+
+<div class="loader"></div>
+
+
+<div class="container">
+
+{%if not shared%}
+<button type="button" class=" btn btn-primary fa fa-cloud-upload fa-2x" id="click" data-toggle="modal" data-target="#myModal"  name="button"  style="font-size:40px; margin-top:80px;"> <span style="font-size:20px"> Upload Book</span></button>
+
+{%endif%}
+
+   </div>
+
+{%if flag%}
+<div class="create">
+   <div class="alert alert-success alert-dismissible" style="width:400px;">
+     <a  class="close" data-dismiss="alert" aria-label="close">&times;</a>
+   <center> <h1><span class="glyphicon glyphicon-ok"></span></h1> <br>  <h3><strong>Success!</strong><br> Account has been created.</h3> </center>
+   </div>
+</div>
+{%endif%}
+
+
+{%if sno%}
+<div class="create">
+   <div class="alert alert-success alert-dismissible" style="width:400px;">
+     <a  class="close" data-dismiss="alert" aria-label="close">&times;</a>
+   <center> <h1><span class="glyphicon glyphicon-alert"></span></h1><h3><strong></strong><br>you have't shared books yet !</h3> </center>
+   </div>
+</div>
+{%endif%}
+
+{%if rno%}
+<div class="create">
+   <div class="alert alert-success alert-dismissible" style="width:400px;">
+     <a  class="close" data-dismiss="alert" aria-label="close">&times;</a>
+   <center> <h1><span class="glyphicon glyphicon-alert"></span></h1><h3><strong></strong><br>Empty.</h3> </center>
+   </div>
+</div>
+{%endif%}
+
+
+<div class="container">
+
+
+<div class="modal fade" id="myModal" role="dialog">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+        {%if data%}
+        {% for message in messages%}
+      <h4 style="color:red; text-align:center; ">{{message}}</h4>
+      {%endfor%}
+      {%endif%}
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+      </div>
+
+          <form action="/upload" method="post" enctype="multipart/form-data">
+            {% csrf_token %}<br><br>
+
+        <center>  <input type="text" name="book"  id='align' value="" size="38" placeholder="Enter Book Name" required></center>
+          <center>    <br><p >*book name must be unique</p> <br>   </center>
+          <center>   <input type="file" class="new-button" name="document" id="align2" value="" accept="application/pdf, application/vnd.ms-excel,application/msword,application/vnd.ms-powerpoint" required><br><br>   <center>
+
+            <div class="modal-footer">
+          <input type="submit" name="" value="Submit" class="btn btn-secondary"  >
+            </div>
+          </form>
+  </div>
+  </div>
+    </div>
+  </div>
+
+
+
+  <div class="container">
+
+
+  <div class="modal fade" id="my" role="dialog">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+          {%if data%}
+          {% for message in messages%}
+        <h4 style="color:red; text-align:center; ">{{message}}</h4>
+        {%endfor%}
+        {%endif%}
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+        </div>
+
+            <form action="/upload" method="post" enctype="multipart/form-data">
+              {% csrf_token %} <br><br>
+
+          <center>  <input type="text" name="book"  id='align' value="" size="38" placeholder="Enter Book Name" required></center>
+            <center>    <br><p >*book name must be unique</p> <br>   </center>
+            <center>   <input type="file" class="new-button" name="document" id="align2" value="" accept="application/pdf, application/vnd.ms-excel,application/msword,application/vnd.ms-powerpoint" required><br><br>   <center>
+
+              <div class="modal-footer">
+            <input type="submit" name="" value="Submit" class="btn btn-secondary"  >
+              </div>
+            </form>
+    </div>
+    </div>
+      </div>
+    </div>
+
+
+
+<div class="container" style="margin-top:50px;">
+
+{%if books%}
+ <table class="table table-responsive">
+    {%for book in books%}
+    <tr>
+
+      <tr>
+        <td></td>
+        <td></td>
+        <td > {{book.filename_real}} </td>
+
+        <td > <form  action="delete" method="post">
+        <input type="hidden"  name="filename1" value={{book.filename_real}}>
+          {% csrf_token %}
+          <input type="submit" class="btn btn-danger"    onClick="return confirmSubmit()" name="" value="Delete">
+        </form></td>
+        <td ><button type="button" class="btn btn-success" name="button"><a href={{book.url}}>Download</a></button></td>
+        <td >    <form  action="/share" method="post">
+        <input type="hidden"  name="sharefile" value={{book.filename_real}}>
+       {% csrf_token %}
+       <input type="submit" class="btn btn-info" name="" value="Share">
+        </form> </td>
+
+      </tr>
+
+
+    {%endfor%}
+
+
+</table>
+{%endif%}
+</div>
+
+
+<script type="text/javascript">
+function confirmSubmit()
+{
+var agree=confirm("Do you want to delete book ?");
+if (agree)
+ return true ;
+else
+ return false ;
+}
+
+function confirmShare()
+{
+var agree=confirm("Do you want to stop sharing ?");
+if (agree)
+ return true ;
+else
+ return false ;
+}
+
+ function confirmRemove()
+ {
+   var agree=confirm("Do you want to stop receiving ?");
+   if (agree)
+    return true ;
+   else
+    return false ;
+ }
+
+
+</script>
+
+
+
+<div class="container" style="margin-top:100px;">
+{%if sharedbooks%}
+ <table class="table table-responsive">
+    {% csrf_token %}
+  {%for book in sharedbooks%}
+  <tbody>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+   <td><form class="" action="/shareddownload" method="post">
+    {{book.shared_filename}}
+    {% csrf_token %}
+  </form></td>
+
+  <td></td>
+  <td></td>
+  <td></td>
+
+     <td>sharing to {{book.receiver_name}}</td>
+
+     <td> <form  action="/stopsharing" method="post">
+    <input type="hidden"  name="filename" value={{book.shared_filename}}>
+    <input type="hidden" name="receiver" value={{book.receiver_name}}>
+    {% csrf_token %}
+    <input type="submit" class="btn btn-info" name=""  onClick="return confirmShare()" value="Stop Sharing">
+    </form></td>
+   </tr>
+    {%endfor%}
+  </tbody>
+</table>
+{%endif%}
+</div>
+
+</div>
+
+
+
+
+
+<div class="container" style="margin-top:0px;">
+{%if receivedbooks%}
+  {% csrf_token %}
+ <table class="table table-responsive">
+      <tbody>
+    {% csrf_token %}
+  {%for book in receivedbooks%}
+    <tr>
+
+
+      <td>{{book.shared_filename}}</td>
+      <td></td>
+      <td></td>
+<td>shared by {{book.sender_name}}</td>
+
+
+   <td><form class="" action="/shareddownload" method="post">
+     {% csrf_token %}
+     <button type="button" class="btn btn-success" name="button"><a href={{book.real_filename}} style="text-decoration:none;">Download</a></button>
+     </form></td>
+
+
+    <td><form  action="/removereceiving" method="post">
+    <input type="hidden"  name="filename1" value={{book.shared_filename}}>
+    {% csrf_token %}
+     <input type="submit" class="btn btn-danger" name="" value="Remove" onClick="return confirmRemove()">
+       </form></td>
+     </tr>
+
+    {%endfor%}
+      <tbody>
+  </table>
+{%endif%}
+
+</div>
+</div>
+
+
+
+<li><a href="#share" id="sh" class="trigger-btn" data-toggle="modal" style="visibility:hidden;">share</a></li>
+
+
+
+<div class="container">
+
+
+<div class="modal fade" id="share" role="dialog">
+  <div class="modal-dialog">
+  <div class="modal-content">
+      <div class="modal-header">
+        {%if data%}
+        {% for message in messages%}
+      <h4 style="color:red; text-align:center; ">{{message}}</h4>
+      {%endfor%}
+      {%endif%}
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+
+      </div>
+
+          <form action="sharefile" method="post" >
+            {% csrf_token %}<br><br>
+            <center>Book name</center> <br>
+     <center> <input type="text" name="sendingfile" value={{file}} readonly> </center> <br>
+      <center>*Enter valid mycloudbooks username</center> <br>
+        <center>  <input type="text" name="usname"  id='align' value="" size="38" placeholder="Enter Username" required></center>
+
+           <br>
+            <div class="modal-footer">
+          <input type="submit" name="" value="Submit" class="btn btn-secondary"  >
+            </div>
+          </form>
+  </div>
+  </div>
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+
+<div id="MyModal" class="modal fade">
+	<div class="modal-dialog modal-login">
+		<div class="modal-content">
+
+				<div class="modal-header">
+					<h4 class="modal-title" style="text-align:center;">My Account</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				</div>
+				<div class="modal-body">
+
+					<div class="form-group">
+						<label>Firstname</label>
+						<input type="text" class="form-control" name="Firstname" value={{data.firstname}} readonly>
+					</div>
+
+          <div class="form-group">
+ 						<label>Lastname</label>
+ 						<input type="text" class="form-control" name="Lastname" value={{data.lastname}} readonly>
+ 					</div>
+
+
+          <div class="form-group">
+            <label>Username</label>
+            <input type="text" class="form-control" name="Username" value={{data.username}} readonly>
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" class="form-control" name="Email" value={{data.email}} readonly>
+          </div>
+            <input type="submit" id="abs" class="btn btn-primary" onclick="change()" style="margin-right:222px;" value="Change Password">
+
+<form  action="change" method="post" name="passval" onsubmit=" return password_validation()">
+  {% csrf_token %}
+  <div class="" id="okay" style="visibility:hidden">
+					<div class="form-group">
+						<div class="clearfix">
+							<label>Password*</label>
+
+						</div>
+<span class="glyphicon glyphicon-info-sign " onmouseover="des()" id="pass"></span>
+						<input type="password" class="form-control" name="Password"required="required"><span id='pas'  style="visibility:hidden;color:red;">*invald</span>
+					</div>
+
+
+          <div class="form-group">
+            <div class="clearfix">
+              <label>Confirm Password*</label>
+
+            </div>
+
+            <input type="password" class="form-control" name="ConfirmPassword"required="required" ><span id='cpass' style="visibility:hidden;color:red;">*didn't match</span>
+          </div>
+
+
+				<div class="modal-footer">
+
+					<input type="submit" class="btn btn-primary" style="margin-right:222px;" value="Save Password">
+				</div>
+        </div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function () {
+window.history.forward(1);
+});
+</script>
+
+
+{%if fl%}
+<script type="text/javascript">
+
+  document.getElementById('sh').click()
+
+
+</script>
+{%endif%}
+
+
+
+
+{%if flag%}
+<script type="text/javascript">
+
+  document.getElementById('click').click()
+
+  console.log('wait')
+</script>
+{%endif%}
+
+
+
+
+</body>
+</html>

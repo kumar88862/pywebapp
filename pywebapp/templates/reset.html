@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Reset</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+
+
+<script type="text/javascript">
+
+
+
+function password_validation()
+{
+  var Password=document.forms['passval']['password'].value;
+  var ConfirmPassword=document.forms['passval']['password1'].value;
+
+ var passw = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+ ws=/\s/g;
+
+console.log(Password);
+console.log(ConfirmPassword);
+
+
+
+
+ if(!Password.match(passw))
+  {
+
+    confirm('*Password 6 to 20 characters.\n*one numeric digit.\n*one uppercase.\n*one lowercase letter.')
+    return false;
+
+  }
+
+ else {
+   if ( Password.match(ws)) {
+      confirm('*Password 6 to 20 characters.\n*one numeric digit.\n*one uppercase.\n*one lowercase letter.')
+      return false;
+   }
+
+
+ }
+
+ if(!(Password == ConfirmPassword))
+ {
+confirm('*Password 6 to 20 characters.\n*one numeric digit.\n*one uppercase.\n*one lowercase letter.')
+   return false;
+
+
+ }
+else {
+console.log('waiting')
+
+return true;
+}
+
+
+}
+
+
+
+function des()
+{
+  confirm('*Password 6 to 20 characters.\n*one numeric digit.\n*one uppercase.\n*one lowercase letter.')
+}
+
+
+</script>
+
+  <style media="screen">
+    .modal-footer {   border-top: 0px; }
+  </style>
+  </head>
+  <body>
+
+
+{%if password%}
+
+
+
+      <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+            
+
+          </div>{% csrf_token %}
+          {% for message in messages%}
+        <h4 style="color:red; text-align:center; ">{{message}}</h4>
+        {%endfor%}
+          <div class="modal-body">
+              <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="text-center">
+
+                              <p>If you have forgotten your password you can reset it here.</p>
+                                <div class="panel-body">
+                                    <fieldset>
+                                        <div class="form-group">
+                                          <form action="sendemail" method="post">
+                                           {%csrf_token%}
+
+                                            <input class="form-control input-lg" placeholder="E-mail Address" name="email" type="email" required>
+
+                                        </div>{% csrf_token %}
+                                        <input class="btn btn-lg btn-primary btn-block" value="Send OTP" type="submit">
+                                          </form>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          </div>
+          <div class="modal-footer">
+              <div class="col-md-12">
+
+          </div>
+          </div>
+      </div>
+      </div>
+
+
+{%endif%}
+
+
+
+
+    <!--modal-->
+{%if otp%}
+      <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="text-center"></h1>
+          </div>
+          {% for message in messages%}
+        <h4 style="color:red; text-align:center; ">{{message}}</h4>
+        {%endfor%}
+          <div class="modal-body">
+              <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="text-center">
+
+                              <p>Enter OTP</p>
+                                <div class="panel-body">
+                                    <fieldset>
+                                      <form class="" action="check" method="post">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                          <input type="hidden" name="username" value={{uname}}>
+                                          <input type="hidden" name="email" value={{email}}>
+                                            <input class="form-control input-lg" placeholder="OTP" name="otp" type="text">
+                                        </div>
+                                        <input class="btn btn-lg btn-primary btn-block" value="Submit OTP" type="submit">
+                                          </form>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          </div>
+          <div class="modal-footer">
+
+          </div>
+      </div>
+      </div>
+
+{%endif%}
+
+{%if reset%}
+      <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+              <h1 class="text-center"></h1>
+          </div>
+          <div class="modal-body">
+              <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div class="text-center">
+                              <p>Reset Psssword</p>
+                                <div class="panel-body">
+                                    <fieldset>
+                                      <form class="" action="changepassword" method="post" name="passval" onsubmit=" return password_validation()">
+                                        {% csrf_token %}
+
+                                            <input class="form-control input-lg" name="email" type="email" value={{email}} readonly> <br>
+                                              <input class="form-control input-lg"  name="uname" type="text" value={{uname}} readonly>
+
+
+                                              <span class="glyphicon glyphicon-info-sign " style="margin-right:30px;" onmouseover="des()" id="pass"></span>
+                                                <input class="form-control input-lg" placeholder="Password" name="password" type="password" required> <span id='cpass' style="visibility:hidden;color:red;">*invalid</span>
+
+
+
+
+                                                  <input class="form-control input-lg" placeholder="Re-enter password" name="password1" type="password" required> <span id='cpass' style="visibility:hidden;color:red;">*didn't match</span>
+
+                                        <input class="btn btn-lg btn-primary btn-block" value="Reset Password" type="submit">
+                                          </form>
+                                    </fieldset>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          </div>
+          <div class="modal-footer">
+
+          </div>
+      </div>
+      </div>
+{%endif%}
+
+
+  </body>
+</html>
